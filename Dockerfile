@@ -1,13 +1,10 @@
+# ============================================================
+#  Dockerfile — Next.js (SSR / Standalone)
+#  O .env.production é injetado pelo workflow antes do build
+# ============================================================
+
 FROM node:22-alpine AS build
 WORKDIR /app
-
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_APP_URL
-ARG NEXT_PUBLIC_APP_NAME
-
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
-ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
