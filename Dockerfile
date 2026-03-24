@@ -1,8 +1,3 @@
-# ============================================================
-#  Dockerfile — Next.js (SSR)
-#  Repo: ponto-front
-# ============================================================
-
 FROM node:22-alpine AS build
 WORKDIR /app
 
@@ -14,18 +9,11 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
 
-COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
-
-RUN if [ -f pnpm-lock.yaml ]; then \
-      npm install -g pnpm && pnpm install --frozen-lockfile; \
-    elif [ -f yarn.lock ]; then \
-      yarn install --frozen-lockfile; \
-    else \
-      npm ci; \
-    fi
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 COPY . .
-RUN npm run build
+RUN yarn build
 
 
 FROM node:22-alpine
@@ -33,7 +21,6 @@ WORKDIR /app
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Next.js standalone output
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
