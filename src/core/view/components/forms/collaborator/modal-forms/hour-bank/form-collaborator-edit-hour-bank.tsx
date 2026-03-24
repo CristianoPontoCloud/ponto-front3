@@ -1,0 +1,76 @@
+import { useErrorToastSubmit } from "@/application/hooks/use-error-toast-submit";
+import type { CollaboratorDetails } from "@/domain/entities/collaborator/collaborator";
+import type { CollaboratorEditHourBankFormProps } from "@/domain/entities/collaborator/collaborator-edit-hour-bank";
+import {
+	CollaboratorViewer,
+	type CollaboratorViewerParams,
+} from "@/view/components/entities/collaborator/collaborator-viewer";
+import DateForm from "@/view/components/formfields/date-form-field";
+import { GridForm } from "@/view/components/formfields/grid-from";
+import SelectForm from "@/view/components/formfields/select-form";
+import { TextAreaForm } from "@/view/components/formfields/text-area";
+import { Button } from "@/view/components/ui/button";
+import { Form } from "@/view/components/ui/form";
+import { Separator } from "@/view/components/ui/separator";
+import { useFormCollaboratorEditHourBank } from "./use-form-collaborator-edit-hour-bank";
+
+export interface FormCollaboratorEditHourBank {
+	collaboratorId: string;
+	getSubmitResponse?: (data: CollaboratorDetails["hourBanks"]) => void;
+	collaboratorViewer: CollaboratorViewerParams;
+}
+
+export function FormCollaboratorEditHourBank({
+	collaboratorViewer,
+	collaboratorId,
+	getSubmitResponse,
+}: FormCollaboratorEditHourBank) {
+	const { form, onSubmit, resetModal } = useFormCollaboratorEditHourBank({
+		collaboratorId,
+		getSubmitResponse,
+	});
+	const fullspan = "col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2";
+	useErrorToastSubmit<CollaboratorEditHourBankFormProps>({ form });
+	return (
+		<Form {...form}>
+			<form className="w-[288px] flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+				<Separator orientation="horizontal" />
+				<CollaboratorViewer {...collaboratorViewer} />
+				<div className="w-full border-t-[1px] border-dashed border-boder" />
+				<GridForm className="my-0">
+					<SelectForm
+						form={form}
+						formFieldName="hourBankId"
+						label="Banco de horas"
+						placeholder="Selecione"
+						endpoint="hour-bank/findAllFiltered?status=ACTIVE"
+						classNames={{ formItem: fullspan }}
+						required
+					/>
+					<DateForm
+						form={form}
+						formFieldName="startDate"
+						label="Início da vigência"
+						placeholder="Selecione a data"
+						classNames={{ formItem: fullspan }}
+						required
+					/>
+					<TextAreaForm
+						form={form}
+						formFieldName="observation"
+						label="Observação (opcional)"
+						classNames={{ formItem: fullspan }}
+						maxLength={200}
+					/>
+					<p className={`text-muted-foreground ${fullspan}`}>Máximo: 200 caracteres</p>
+				</GridForm>
+				<div className="w-full flex justify-end gap-2">
+					<Button type="button" variant="outline" onClick={() => resetModal()}>
+						Cancel
+					</Button>
+					<Button type="submit">Confirmar</Button>
+				</div>
+			</form>
+		</Form>
+	);
+}

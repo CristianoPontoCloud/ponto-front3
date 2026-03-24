@@ -1,0 +1,25 @@
+{
+  "data":{
+    "user":{
+      "sub": "8caa07f4-ae21-40c2-9927-b4630441743b",
+      "phone": null,
+      "email": "joao@example.com",
+      "username": "systemadmin",
+      "firstName": "João",
+      "lastName": "Silva",
+      "companyId": "3163e3af-9d3e-418c-b983-d108adade816",
+      "parentCompanyId": null,
+      "companyList": [
+        {
+          "companyId": "3163e3af-9d3e-418c-b983-d108adade816",
+          "companyName": "Main Office"
+        }
+      ],
+      "lastAccessedCompany": "3163e3af-9d3e-418c-b983-d108adade816",
+      "collaboratorId": "712538fd-d0a7-4720-90ea-28b1307282f2",
+      "admin": null,
+      "hasCpf": true,
+      "origin": "web"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+services:
+  pontocloud-client-side:
+    container_name: pontocloud-client-side
+    build:
+      context: .
+    restart: always
+    command: sh -c "yarn build && yarn start"
+    environment:
+      - NODE_ENV=production
+      - PORT=${PORT}
+    volumes:
+      - .:/app
+      # - /app/node_modules
+    ports:
+      - "${PORT}:${PORT}"
