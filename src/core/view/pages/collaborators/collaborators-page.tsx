@@ -21,44 +21,44 @@ export default function CollaboratorsPage({ collaborators }: CollaboratorsPagePa
 	const { columns, form, closeSheet } = useCollaboratorsPage();
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
-	return (
-		<InfinityQueryProvider<Collaborator>
-			queryKey="collaborator"
-			facadeFactory={collaboratorsFacadeFactory}
-			initialData={collaborators}
-		>
-			<SheetOverSheetContentControllerProvider>
-				<div className="flex flex-col h-full">
-					<div className="flex justify-between mb-4 items-center" ref={headerRef}>
-						<h1 className="text-2xl font-semibold">Colaboradores</h1>
 
-						<DataManager
-							sheetParams={{
-								title: <CollaboratorHeaderSheetForm />,
-								description: "Preencha os campos obrigatórios para finalizar o cadastro.",
-								labelOpenSheet: "Colaborador",
-								FormComponent: <CollaboratorLayoutSheetForm closeSheet={() => closeSheet()} />,
-								sheetMinWidth: "55vw",
-								form,
-							}}
-							filterParams={{
-								customFilters: [
-									...collaboratorStatusDefaultList,
-									{
-										label: "Todos",
-										value: "ANY",
-									},
-								],
-							}}
-						/>
-					</div>
-					<InfinityTable<Collaborator>
-						columns={columns}
-						heightTable={height - 30}
-						entity="colaborador"
+	return (
+		<div className="flex flex-col h-full">
+			<div className="flex justify-between mb-4 items-center" ref={headerRef}>
+				<h1 className="text-2xl font-semibold">Colaboradores</h1>
+				<SheetOverSheetContentControllerProvider>
+					<DataManager
+						sheetParams={{
+							title: <CollaboratorHeaderSheetForm />,
+							description: "Preencha os campos obrigatórios para finalizar o cadastro.",
+							labelOpenSheet: "Colaborador",
+							FormComponent: <CollaboratorLayoutSheetForm closeSheet={() => closeSheet()} />,
+							sheetMinWidth: "55vw",
+							form,
+						}}
+						filterParams={{
+							customFilters: [
+								...collaboratorStatusDefaultList,
+								{
+									label: "Todos",
+									value: "ANY",
+								},
+							],
+						}}
 					/>
-				</div>
-			</SheetOverSheetContentControllerProvider>
-		</InfinityQueryProvider>
+				</SheetOverSheetContentControllerProvider>
+			</div>
+			<InfinityQueryProvider<Collaborator>
+				queryKey="collaborator"
+				facadeFactory={collaboratorsFacadeFactory}
+				initialData={collaborators}
+			>
+				<InfinityTable<Collaborator>
+					columns={columns}
+					heightTable={height - 30}
+					entity="colaborador"
+				/>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

@@ -1,8 +1,9 @@
+import { useWebSocketAdapter } from "@/application/adapters/web-socket/use-web-socket-adapter";
 import { collaboratorsFacadeFactory } from "@/application/factories/collaborator/collaborators-facade-factory";
-import { ViewTypeEnum } from "@/domain/view-type";
+import { mirrorMarkFacadeFactory } from "@/application/factories/mirror-mark-factory";
+import { cpfMaks } from "@/domain/global-helpers/masks/cpf-mask";
+import { ScopeEnum } from "@/domain/scope";
 import { CollaboratorViewerTooltipContent } from "@/view/components/entities/collaborator/collaborator-viewer-tooltip-content";
-import { DownloadFileToast } from "@/view/components/reutilities-toasts/download-file-toast";
-import { toastCustom } from "@/view/components/toaster/toast-custom";
 import { Badge } from "@/view/components/ui/badge";
 import { Button } from "@/view/components/ui/button";
 import { Tooltip, TooltipProvider, TooltipTrigger } from "@/view/components/ui/tooltip";
@@ -14,10 +15,15 @@ import { useQueryState } from "nuqs";
 import { useMemo } from "react";
 
 interface MirrorMarkFooterParams {
-	selectsMirrorMarks: string[];
+	selectsIdsMirrorMarks: string[];
 }
-export function MirrorMarkFooter({ selectsMirrorMarks }: MirrorMarkFooterParams) {
-	const [viewtype] = useQueryState("viewtype", {
+export function MirrorMarkFooter({ selectsIdsMirrorMarks }: MirrorMarkFooterParams) {
+	// const [year] = useQueryState("year", {
+	// 	history: "replace",
+	// 	shallow: true,
+	// 	clearOnDefault: false,
+	// });
+	const [scope] = useQueryState("scope", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
@@ -27,14 +33,15 @@ export function MirrorMarkFooter({ selectsMirrorMarks }: MirrorMarkFooterParams)
 		shallow: true,
 		clearOnDefault: false,
 	});
-	const user = useSession().data?.user;
-	const buttonDisabler = selectsMirrorMarks.length === 0;
-	const token = user?.token ?? "";
-	const companyId = user?.companyId ?? "";
-	const collaboratorFacade = useMemo(() => collaboratorsFacadeFactory(token), [token]);
+	const websocketAdapter = useWebSocketAdapter();
+	const user = useSession().data?.user
+	const token = user?.token ?? ""
+	const companyId = user?.companyId ?? ""
+	const buttonDisabler = selectsIdsMirrorMarks.length === 0;
+	const facade = useMemo(() => ({ collaborator: collaboratorsFacadeFactory(token), mirrorMark: mirrorMarkFacadeFactory(token) }), [token]);
 	const collaboratorQuery = useQuery({
 		queryKey: ["collaborator", token],
-		queryFn: async () => await collaboratorFacade.filtered({ status: "ACTIVE", companyId }),
+		queryFn: async () => await facade.collaborator.filtered({ status: "ACTIVE", companyId }),
 		retry: false,
 		enabled: true,
 		refetchOnWindowFocus: false,
@@ -49,6 +56,8 @@ export function MirrorMarkFooter({ selectsMirrorMarks }: MirrorMarkFooterParams)
 		department: faker.commerce.department(),
 		email: user?.email ?? "",
 		lastMark: "00/00/2025 às 00:00",
+		cpf: collaboratorFinded?.cpf ? cpfMaks(collaboratorFinded?.cpf) : ""
+
 	};
 	const selectedCollaborator = {
 		name: `${collaboratorFinded?.name ?? ""} ${collaboratorFinded?.surname ?? ""}`,
@@ -56,10 +65,67 @@ export function MirrorMarkFooter({ selectsMirrorMarks }: MirrorMarkFooterParams)
 		department: collaboratorFinded?.department?.name ?? "",
 		email: collaboratorFinded?.email ?? "",
 		lastMark: "00/00/2025 às 00:00",
+		cpf: collaboratorFinded?.cpf ? cpfMaks(collaboratorFinded?.cpf) : ""
 	};
 	const collaboratorCase =
-		viewtype === ViewTypeEnum.MY ? collaboratorSession : selectedCollaborator;
+		scope === ScopeEnum.MY ? collaboratorSession : selectedCollaborator;
 
+
+	async function onDownLoadFiles() {
+		// const mirrorMarks = await facade.mirrorMark.filtered({
+		// 	year: year ?? "",
+		// 	collaboratorId: collaboratorId ?? "",
+		// 	scope: scope ?? "",
+		// 	companyId,
+		// })
+		// const fullSelectedMirrorMarks = mirrorMarks.data?.filter((mirrorMark) => {
+		// 	return selectsIdsMirrorMarks?.find((id) => mirrorMark.id === id)
+		// })
+
+		// const periods: Array<{ from: string, to: string }> = []
+
+		// for (const mirroMark of mirrorMarks?.data ?? []) {
+		// 	for (const id)
+		// }
+		// const from = fullSelectedMirrorMarks?.[fullSelectedMirrorMarks?.length - 1].periodFrom ?? ""
+		// const to = fullSelectedMirrorMarks?.[0].periodTo ?? ""
+
+		const { data } = await facade.mirrorMark.generate({
+			periods: [],
+			scope: scope as ScopeEnum,
+			tz: "America/Sao_Paulo",
+			companyId,
+			collaboratorId
+		})
+		if (!data?.socketChannel) return
+		const channelName = data?.socketChannel
+		websocketAdapter.connectAndListen({
+			eventCallback: (params) => {
+				console.log(params)
+				// const publicUrl = params?.data?.publicUrl;
+				// if (!publicUrl) throw new Error();
+				// setLink(publicUrl);
+			},
+			channelName,
+		});
+		// toastCustom({
+		// 	Component: <DownloadFileToast
+		// 		fileName="Espelho de ponto"
+		// 		loadFile={(setLink) => {
+		// 			websocketAdapter.connectAndListen<any>({
+		// 				eventCallback: (params) => {
+		// 					console.log(params)
+		// 					const publicUrl = params?.data?.publicUrl;
+		// 					if (!publicUrl) throw new Error();
+		// 					setLink(publicUrl);
+		// 				},
+		// 				channelName,
+		// 			});
+		// 		}}
+		// 	/>,
+		// 	duration: 999999
+		// })
+	}
 	return (
 		<div className="w-full h-[36px] flex justify-between ">
 			<TooltipProvider>
@@ -69,7 +135,7 @@ export function MirrorMarkFooter({ selectsMirrorMarks }: MirrorMarkFooterParams)
 							<UserRound className="w-[16px] h-[16px] " />
 							<span>{collaboratorCase.name}</span>
 							<Badge className="px-2 py-0 h-[20px] bg-muted text-muted-foreground shadow-none">
-								00.000.000-00
+								{collaboratorCase.cpf}
 							</Badge>
 						</div>
 					</TooltipTrigger>
@@ -78,11 +144,7 @@ export function MirrorMarkFooter({ selectsMirrorMarks }: MirrorMarkFooterParams)
 			</TooltipProvider>
 			<Button
 				disabled={buttonDisabler}
-				onClick={() =>
-					toastCustom({
-						Component: <DownloadFileToast fileName="Espelho de ponto" loadFile={() => {}} />,
-					})
-				}
+				onClick={() => onDownLoadFiles()}
 			>
 				Baixar selecionados
 			</Button>

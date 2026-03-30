@@ -26,7 +26,7 @@ import {
 	CollapsibleTrigger,
 } from "@/view/components/ui/collapsible";
 
-import { ViewTypeEnum } from "@/domain/view-type";
+import { ScopeEnum } from "@/domain/scope";
 import {
 	Sidebar,
 	SidebarContent,
@@ -42,6 +42,7 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from "@/view/components/ui/sidebar";
+import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { svgCompanyName } from "../svgs/svg-company-name";
@@ -59,107 +60,116 @@ interface MenuItem {
 }
 const statusFilterDefault = "?status=ACTIVE";
 
-const items: { [key: string]: MenuItem[] } = {
-	Geral: [
-		{ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-		{ title: "Calendário", url: "#", icon: Calendar },
-	],
-	Gestão: [
-		{
-			title: "Colaboradores",
-			url: "/collaborators",
-			icon: Users,
-			statusFilter: statusFilterDefault,
-		},
-		{
-			title: "Cadastros",
-			url: "/registrations",
-			icon: FilePlus,
-			statusFilter: statusFilterDefault,
-		},
-		{
-			title: "Horários",
-			url: "/hours",
-			icon: Timer,
-			statusFilter: statusFilterDefault,
-		},
-		{
-			title: "Apurações",
-			url: "/timetracking",
-			icon: SearchCheck,
-			// statusFilter: `?type=${TimeTrackingTypeEnum.monthly}`,
-		},
-		{
-			title: "Relatório fiscais",
-			url: "/fiscal-reports",
-			icon: FileDown,
-		},
-		{
-			title: "Relatório gerencias",
-			url: "/management-reports",
-			icon: PieChart,
-		},
-		{
-			title: "Exportações",
-			url: "/exports",
-			icon: FileCode,
-		},
-	],
-	Detalhamento: [
-		{
-			title: "Ocorrências",
-			url: "/irregularities",
-			icon: Megaphone,
-		},
-		{
-			title: "Solicitações",
-			url: "/request-instance",
-			icon: ShieldCheck,
-			statusFilter: `?viewtype=${ViewTypeEnum.MY}`,
-		},
-		{
-			title: "Comprovantes",
-			url: "/receipts",
-			icon: FileCheck,
-			statusFilter: `?viewtype=${ViewTypeEnum.MY}`,
-		},
-		{
-			title: "Espelhos de ponto",
-			url: "/mirror-mark",
-			icon: History,
-			statusFilter: `?viewtype=${ViewTypeEnum.MY}`,
-		},
-	],
-	Administração: [
-		{
-			title: "Empresas",
-			url: "/companies",
-			icon: Building2,
-			statusFilter: statusFilterDefault,
-		},
-		{ title: "Financeiro", url: "#", icon: Wallet },
-		{
-			title: "Configurações",
-			url: "/settings",
-			icon: Settings,
-			subOptions: [
-				{
-					title: "Permissões",
-					url: "/settings/permissions?view=ROLES",
-				},
-				{
-					title: "Perfis de acesso",
-					url: "/settings/access-profile?tab=GENERAL",
-				},
-			],
-		},
-		// {
-		// 	title: "Permissões",
-		// 	url: "/role-settings",
-		// 	icon: LockOpen,
-		// 	statusFilter: `?type=${RoleSettingViewEnum.ACCESS_PROFILE}`,
-		// },
-	],
+const items = ({ collaboratorId, startDay }: { startDay: number, collaboratorId: string }): { [key: string]: MenuItem[] } => {
+	const date = new Date()
+	const month = String(date.getMonth() + 1).padStart(2, "0")
+	const startDayParsed = String(startDay).padStart(2, "0")
+	const year = date.getFullYear()
+	const day = String(date.getDate()).padStart(2, "0")
+	const from = `${year}-${month}-${startDayParsed}`
+	const to = `${year}-${month}-${day}`
+	return {
+		Geral: [
+			{ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+			{ title: "Calendário", url: "#", icon: Calendar },
+		],
+		Gestão: [
+			{
+				title: "Colaboradores",
+				url: "/collaborators",
+				icon: Users,
+				statusFilter: statusFilterDefault,
+			},
+			{
+				title: "Cadastros",
+				url: "/registrations",
+				icon: FilePlus,
+				statusFilter: statusFilterDefault,
+			},
+			{
+				title: "Horários",
+				url: "/hours",
+				icon: Timer,
+				statusFilter: statusFilterDefault,
+			},
+			{
+				title: "Apurações",
+				url: "/timetracking",
+				icon: SearchCheck,
+				// statusFilter: `?type=${TimeTrackingTypeEnum.monthly}`,
+			},
+			{
+				title: "Relatório fiscais",
+				url: "/fiscal-reports",
+				icon: FileDown,
+			},
+			{
+				title: "Relatório gerencias",
+				url: "/management-reports",
+				icon: PieChart,
+			},
+			{
+				title: "Exportações",
+				url: "/exports",
+				icon: FileCode,
+			},
+		],
+		Detalhamento: [
+			{
+				title: "Ocorrências",
+				url: "/irregularities",
+				icon: Megaphone,
+			},
+			{
+				title: "Solicitações",
+				url: "/request-instance",
+				icon: ShieldCheck,
+				statusFilter: `?scope=${ScopeEnum.MY}`,
+			},
+			{
+				title: "Comprovantes",
+				url: "/receipts",
+				icon: FileCheck,
+				statusFilter: `?scope=${ScopeEnum.MY}&from=${from}&to=${to}&collaboratorId=${collaboratorId}`,
+			},
+			{
+				title: "Espelhos de ponto",
+				url: "/mirror-mark",
+				icon: History,
+				statusFilter: `?scope=${ScopeEnum.MY}&year=${year}&collaboratorId=${collaboratorId}`,
+			},
+		],
+		Administração: [
+			{
+				title: "Empresas",
+				url: "/companies",
+				icon: Building2,
+				statusFilter: statusFilterDefault,
+			},
+			{ title: "Financeiro", url: "#", icon: Wallet },
+			{
+				title: "Configurações",
+				url: "/settings",
+				icon: Settings,
+				subOptions: [
+					{
+						title: "Permissões",
+						url: "/settings/permissions?view=ROLES",
+					},
+					{
+						title: "Perfis de acesso",
+						url: "/settings/access-profile?tab=GENERAL",
+					},
+				],
+			},
+			// {
+			// 	title: "Permissões",
+			// 	url: "/role-settings",
+			// 	icon: LockOpen,
+			// 	statusFilter: `?type=${RoleSettingViewEnum.ACCESS_PROFILE}`,
+			// },
+		],
+	}
 };
 
 function applyStyleOnCurrentPage(currentPathname: string, itemUrl: string) {
@@ -172,7 +182,9 @@ function applyStyleOnCurrentPage(currentPathname: string, itemUrl: string) {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const [openItems, setOpenItems] = useState<string[]>([]);
 	const pathname = usePathname();
-
+	const user = useSession().data?.user
+	const collaboratorId = user?.collaboratorId ?? ""
+	const startDay = user?.startDay ?? 1
 	const router = useRouter();
 
 	const handleToggle = useCallback((itemTitle: string) => {
@@ -189,7 +201,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<CompanyLogo svgLogo={svgLogo} svgCompanyName={svgCompanyName} />
 			</SidebarHeader>
 			<SidebarContent className="bg-sidebar border-t border-sidebar-border">
-				{Object.entries(items).map(([groupLabel, groupItems]) => (
+				{Object.entries(items({ startDay, collaboratorId })).map(([groupLabel, groupItems]) => (
 					<SidebarGroup key={groupLabel}>
 						<SidebarGroupLabel className="text-xs font-extralight">
 							{groupLabel.charAt(0).toUpperCase() + groupLabel.slice(1)}

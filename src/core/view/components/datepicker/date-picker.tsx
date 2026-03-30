@@ -52,8 +52,6 @@ function DatePicker({
 	useEffect(() => {
 		setSelectedDate(value);
 	}, [value]);
-	console.log(typeof selectedDate)
-	console.log(selectedDate)
 	return (
 		<Popover>
 			<PopoverTrigger asChild>

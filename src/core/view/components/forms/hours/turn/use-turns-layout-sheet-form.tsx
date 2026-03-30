@@ -1,7 +1,6 @@
 import { turnPolicyFacadeFactory } from "@/application/factories/hours/turn-policy-facade-factory";
 import { turnsFacadeFactory } from "@/application/factories/hours/turns-facade-factory";
 import { useModal } from "@/application/providers/modal-provider/modal-provider";
-import { type ErrorMap, executeWithErrorMap } from "@/application/usecases/execute-with-error-map";
 import { useInvalidateQueryAndRefetch } from "@/application/usecases/use-invalidate-query-and-refetch";
 import type { SheetFormProps } from "@/domain/components/sheet/sheet-forms";
 import type { SheetMenuItem } from "@/domain/components/sheet/sheet-menu-lateral";
@@ -44,10 +43,16 @@ export default function useTurnsLayoutSheet({ closeSheet }: SheetFormProps) {
 	const { Exclude } = useToastCustomDefaults();
 	const { setModalAndOpen, resetModal } = useModal();
 
-	const turnsFacade = useMemo(() => turnsFacadeFactory(token), [token]);
+	const facade = useMemo(() => ({
+		turn: turnsFacadeFactory(token),
+		turnPolicy: (turnId: string) => turnPolicyFacadeFactory({
+			token,
+			turnId,
+		})
+	}), [token]);
 
 	async function excludeTurn(id: string) {
-		await turnsFacade.delete(id);
+		await facade.turn.delete(id);
 		invalidateQueryAndRefetch();
 		resetModal();
 		closeSheet();
@@ -84,76 +89,64 @@ export default function useTurnsLayoutSheet({ closeSheet }: SheetFormProps) {
 		invalidateSelects();
 	}
 
-	function getErrorMap(id?: string): ErrorMap {
+	function errorCase(id: string | undefined, error: string) {
 		const action = !id ? "criar" : "editar";
-		return {
-			TURN_ERROR: () => {
-				toastError({ tittle: `Erro ao ${action} turno` });
-				return true;
-			},
-			POLICY_ERROR: () => {
-				toastError({ tittle: `Erro ao ${action} política de turno` });
-				return true;
-			},
-		};
+		if (error === "TURN_ERROR" || error === "POLICY_ERROR") {
+			return toastError({ tittle: `Erro ao ${action} turno` });
+		}
+		if (error === "POLICY_ERROR") {
+			return toastError({ tittle: `Erro ao ${action} política de turno` });
+		}
+		toastError({ tittle: "Erro de servidor" });
 	}
-
 	async function createTurn(data: TurnFormProps) {
-		await executeWithErrorMap({
-			errorMap: getErrorMap(data.id),
-			fn: async () => {
-				const turn = await turnsFacade.create({
-					...data,
-					companyId,
-				});
-				if (!turn) throw new Error("TURN_ERROR");
-				const policy = await turnPolicyFacadeFactory({
-					token,
-					turnId: turn.id,
-				}).create({ body: { ...data } });
-				if (!policy) throw new Error("POLICY_ERROR");
-				onSuccessAfterPost();
-				toastCustom({
-					Component: <Save entity={"turno"} />,
-					action: {
-						label: "Desfazer",
-						onClick: () => {},
-					},
-				});
-			},
-		});
+		try {
+			const turn = await facade.turn.create({
+				...data,
+				companyId,
+			})
+			if (!turn) throw new Error("TURN_ERROR");
+			const policy = await facade.turnPolicy(turn.id)
+				.create({ body: { ...data } });
+			if (!policy) throw new Error("POLICY_ERROR");
+			onSuccessAfterPost();
+			toastCustom({
+				Component: <Save entity={"turno"} />,
+				action: {
+					label: "Desfazer",
+					onClick: () => { },
+				},
+			});
+		} catch (error) {
+			errorCase(data.id, error as unknown as string)
+		}
 	}
 	async function updateTurn(data: TurnFormProps) {
-		await executeWithErrorMap({
-			errorMap: getErrorMap(data.id),
-			fn: async () => {
-				const turn = await turnsFacade
-					.update({
-						...data,
-						companyId,
-					} as EditDto<Turn>)
-					.catch(() => {
-						throw new Error("TURN_ERROR");
-					});
-				if (!turn) return;
-				await turnPolicyFacadeFactory({
-					token,
-					turnId: turn.id,
-				})
-					.update({ body: { ...data, id: data.policyId } })
-					.catch(() => {
-						throw new Error("POLICY_ERROR");
-					});
-				onSuccessAfterPost();
-				toastCustom({
-					Component: <Edit entity={"turno"} />,
-					action: {
-						label: "Desfazer",
-						onClick: () => {},
-					},
+		try {
+			const turn = await facade.turn.update({
+				...data,
+				companyId,
+			} as EditDto<Turn>)
+				.catch(() => {
+					throw new Error("TURN_ERROR");
 				});
-			},
-		});
+			if (!turn) return;
+			await facade.turnPolicy(turn.id)
+				.update({ body: { ...data, id: data.policyId } })
+				.catch(() => {
+					throw new Error("POLICY_ERROR");
+				});
+			onSuccessAfterPost();
+			toastCustom({
+				Component: <Edit entity={"turno"} />,
+				action: {
+					label: "Desfazer",
+					onClick: () => { },
+				},
+			});
+		} catch (error) {
+			errorCase(data.id, error as unknown as string)
+		}
 	}
 	async function onSubmit() {
 		const newDays = [...methods.getValues("days")];

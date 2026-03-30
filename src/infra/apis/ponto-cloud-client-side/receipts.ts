@@ -14,11 +14,12 @@ interface ReceiptsEndPointDto {
 
 export class ReceiptsEndpoint implements ReceiptsEndPointDto {
   constructor(private readonly client: HttpClient) { }
-  private readonly endpoint = 'generate-comprovante'
+  private readonly restApiEndpoint = "comprovantes";
+  private readonly generateWebsocketEndpoint = "generate-comprovante";
   async filtered(urlParams?: string): Promise<AxiosResponse<FindAllResponse>> {
-    return await this.client.get<FindAllResponse>(`${this.endpoint}/findAllFiltered${urlParams ?? ""}`)
+    return await this.client.get<FindAllResponse>(`${this.restApiEndpoint}${urlParams ?? ""}`)
   }
   async generate(body: ReceiptsGenerate): Promise<AxiosResponse<SocketMetadateResponse>> {
-    return this.client.post<ReceiptsGenerate, SocketMetadateResponse>({ url: this.endpoint, body })
+    return this.client.post<ReceiptsGenerate, SocketMetadateResponse>({ url: this.generateWebsocketEndpoint, body })
   }
 }

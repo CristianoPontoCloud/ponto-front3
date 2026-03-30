@@ -17,30 +17,31 @@ export default function HourBankPage({ hourbanks }: HourBankPageParams) {
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
 	return (
-		<InfinityQueryProvider<HourBank>
-			queryKey="hour-bank"
-			facadeFactory={hourBanksFacadeFactory}
-			initialData={hourbanks}
-		>
-			<div className="w-full h-full flex flex-col gap-4">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} banco de horas`,
-							FormComponent: <HourBankSheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Banco de horas",
-							sheetWidth: "410px",
-							sheetMinWidth: "410px",
-							form,
-						}}
-					/>
-				</div>
+
+		<div className="w-full h-full flex flex-col gap-4">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} banco de horas`,
+						FormComponent: <HourBankSheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Banco de horas",
+						sheetWidth: "410px",
+						sheetMinWidth: "410px",
+						form,
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<HourBank>
+				queryKey="hour-bank"
+				facadeFactory={hourBanksFacadeFactory}
+				initialData={hourbanks}
+			>
 				<InfinityTable<HourBank>
 					columns={columns}
 					heightTable={height - 30}
 					entity="banco de horas"
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

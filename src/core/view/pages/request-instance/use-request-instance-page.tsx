@@ -6,7 +6,7 @@ import type {
 } from "@/domain/entities/request-instance/request-instance";
 import { getRequestInstanceStatus } from "@/domain/entities/request-instance/request-instance-status";
 import { getRequestInstaceType } from "@/domain/entities/request-instance/request-instance-type";
-import { ViewTypeEnum } from "@/domain/view-type";
+import { ScopeEnum } from "@/domain/scope";
 import { RequestInstanceStatusViewer } from "@/view/components/entities/request-instance/request-instance-status-viewer";
 import { generateStatusColumn } from "@/view/components/inifity-table/generate-status-column";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,26 +33,26 @@ export function useRequestInstancePage() {
 		const formatedDate = format(currentDate, "dd/MM/yyyy");
 		return `${formatedDate} às ${time}`;
 	}
-	const [viewtype] = useQueryState("viewtype", {
+	const [scope] = useQueryState("scope", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
 	});
 
 	const collaboratorColumn: ColumnDef<RequestInstanceDetails>[] =
-		viewtype === ViewTypeEnum.COMPANY
+		scope === ScopeEnum.COMPANY
 			? [
-					{
-						accessorKey: "collaborator",
-						header: () => {
-							return <div>Collabortor</div>;
-						},
-						cell: ({ row }) => {
-							const { name, surname } = row.original.collaborator;
-							return <div>{`${name}${surname}`}</div>;
-						},
+				{
+					accessorKey: "collaborator",
+					header: () => {
+						return <div>Collabortor</div>;
 					},
-				]
+					cell: ({ row }) => {
+						const { name, surname } = row.original.collaborator;
+						return <div>{`${name}${surname}`}</div>;
+					},
+				},
+			]
 			: [];
 	const columns: ColumnDef<RequestInstanceDetails>[] = [
 		...collaboratorColumn,

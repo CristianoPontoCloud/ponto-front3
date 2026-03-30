@@ -8,6 +8,7 @@ describe("<PunchClockFooterButton />", () => {
 		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		const form = useForm<PunchFormProps>({
 			values: {
+				collectorType: "WEB",
 				date: "",
 				time: "",
 				timestamp: "",
@@ -20,7 +21,7 @@ describe("<PunchClockFooterButton />", () => {
 			},
 			mode: "onSubmit",
 		});
-		function onSubmit() {}
+		function onSubmit() { }
 		return (
 			<SessionProvider>
 				<form onSubmit={form.handleSubmit(onSubmit)}>

@@ -20,26 +20,27 @@ export default function OnCallPage({ oncalls }: OnCallPageParams) {
 	const { setOpen } = useSheet();
 
 	return (
-		<InfinityQueryProvider<OnCall>
-			queryKey="oncall"
-			initialData={oncalls}
-			facadeFactory={oncallsFacadeFactory}
-		>
-			<div className="w-full h-full flex flex-col gap-4">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} sobreaviso`,
-							FormComponent: <OnCallSheetForm closeSheet={() => setOpen(false)} />,
-							labelOpenSheet: "Sobreaviso",
-							sheetWidth: "410px",
-							sheetMinWidth: "410px",
-							form,
-						}}
-					/>
-				</div>
-				<InfinityTable<OnCall> columns={columns} heightTable={height - 30} entity="sobreaviso" />
+
+		<div className="w-full h-full flex flex-col gap-4">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} sobreaviso`,
+						FormComponent: <OnCallSheetForm closeSheet={() => setOpen(false)} />,
+						labelOpenSheet: "Sobreaviso",
+						sheetWidth: "410px",
+						sheetMinWidth: "410px",
+						form,
+					}}
+				/>
 			</div>
-		</InfinityQueryProvider>
+			<InfinityQueryProvider<OnCall>
+				queryKey="oncall"
+				initialData={oncalls}
+				facadeFactory={oncallsFacadeFactory}
+			>
+				<InfinityTable<OnCall> columns={columns} heightTable={height - 30} entity="sobreaviso" />
+			</InfinityQueryProvider>
+		</div>
 	);
 }

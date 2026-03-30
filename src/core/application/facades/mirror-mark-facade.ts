@@ -1,8 +1,8 @@
-import type { MirrorMark, MirrorMarkGenerate } from "@/domain/entities/mirror-mark/mirror-mark";
+import type { MirrorMark, MirrorMarkGenerateParams } from "@/domain/entities/mirror-mark/mirror-mark";
 import type { FilteredParamsDto, ResponseDto, WebSocketResponse } from "@/domain/http/http-client";
 import type { PaginationDto } from "@/domain/http/pagination-dto";
 import type { MirrorMarkFilteredUseCase } from "../usecases/mirror-mark/mirror-mark-filtered";
-import type { MirrorMarkGenerateUseCase } from "../usecases/mirror-mark/mirror-mark-generate";
+import type { MirrorMarkGenerateParamsUseCase } from "../usecases/mirror-mark/mirror-mark-generate";
 
 type PaginationMirrorMark = PaginationDto<MirrorMark[]>
 type SocketMetadateResponse = ResponseDto<WebSocketResponse | null>
@@ -10,19 +10,19 @@ type SocketMetadateResponse = ResponseDto<WebSocketResponse | null>
 
 interface MirrorMarkFacadeDto {
   filtered(params?: FilteredParamsDto): Promise<PaginationMirrorMark>
-  generate(body: MirrorMarkGenerate): Promise<SocketMetadateResponse>
+  generate(body: MirrorMarkGenerateParams): Promise<SocketMetadateResponse>
 }
 
 export class MirrorMarkFacade implements MirrorMarkFacadeDto {
   constructor(
     private readonly filteredUseCase: MirrorMarkFilteredUseCase,
-    private readonly generateUseCase: MirrorMarkGenerateUseCase,
+    private readonly generateUseCase: MirrorMarkGenerateParamsUseCase,
   ) { }
 
   async filtered(params?: FilteredParamsDto): Promise<PaginationMirrorMark> {
     return await this.filteredUseCase.execute(params)
   }
-  async generate(body: MirrorMarkGenerate): Promise<SocketMetadateResponse> {
+  async generate(body: MirrorMarkGenerateParams): Promise<SocketMetadateResponse> {
     return await this.generateUseCase.execute(body)
   }
 }

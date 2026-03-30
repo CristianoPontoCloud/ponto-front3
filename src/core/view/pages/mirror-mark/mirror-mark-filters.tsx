@@ -1,5 +1,5 @@
 import { collaboratorsFacadeFactory } from "@/application/factories/collaborator/collaborators-facade-factory";
-import { ViewTypeEnum } from "@/domain/view-type";
+import { ScopeEnum } from "@/domain/scope";
 import { Combobox } from "@/view/components/combo-box/combo-box";
 import { Tabs, TabsList, TabsTrigger } from "@/view/components/ui/tabs";
 import { YearPicker } from "@/view/components/year-picker/year-picker";
@@ -30,12 +30,12 @@ export function MirrorMarkFilters() {
 			value: id,
 			label: `${name} ${surname}`,
 		})) ?? [];
-	const [viewtype, setViewtype] = useQueryState("viewtype", {
+	const [scope, setscope] = useQueryState("scope", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
 	});
-	const isMyViewType = viewtype === ViewTypeEnum.MY;
+	const isMyscope = scope === ScopeEnum.MY;
 	const [collaboratorId, setCollaboratorId] = useQueryState("collaboratorId", {
 		history: "replace",
 		shallow: true,
@@ -47,17 +47,17 @@ export function MirrorMarkFilters() {
 		clearOnDefault: false,
 	});
 	// useEffect(() => {
-	// 	if (isMyViewType) {
+	// 	if (isMyscope) {
 	// 		setCollaboratorId(userCollaboratorId);
 	// 		return;
 	// 	}
-	// }, [token, isMyViewType, setCollaboratorId]);
+	// }, [token, isMyscope, setCollaboratorId]);
 	useEffect(() => {
-		if (isMyViewType) {
+		if (isMyscope) {
 			setCollaboratorId(userCollaboratorId);
 			return;
 		}
-	}, [viewtype, token, isMyViewType, setCollaboratorId, userCollaboratorId]);
+	}, [scope, token, isMyscope, setCollaboratorId, userCollaboratorId]);
 	return (
 		<div className={"w-full  flex gap-2 justify-end"}>
 			<Combobox
@@ -72,7 +72,7 @@ export function MirrorMarkFilters() {
 						<UserRound className="text-muted w-[12px] h-[12px]" />
 					</div>
 				}
-				disabled={isMyViewType}
+				disabled={isMyscope}
 			/>
 			<YearPicker
 				onChangeYear={(value) => {
@@ -80,13 +80,13 @@ export function MirrorMarkFilters() {
 				}}
 				yearValue={Number(year ?? new Date().getFullYear())}
 			/>
-			<Tabs value={viewtype ?? ""} onValueChange={(value) => setViewtype(value)} data-testid="tabs">
+			<Tabs value={scope ?? ""} onValueChange={(value) => setscope(value)} data-testid="tabs">
 				<TabsList>
-					<TabsTrigger value={ViewTypeEnum.MY}>
+					<TabsTrigger value={ScopeEnum.MY}>
 						<User className="w-4 h-4" />
 						Minhas
 					</TabsTrigger>
-					<TabsTrigger value={ViewTypeEnum.COMPANY}>
+					<TabsTrigger value={ScopeEnum.COMPANY}>
 						<Building2 className="w-4 h-4" />
 						Empresa
 					</TabsTrigger>

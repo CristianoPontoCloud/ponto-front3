@@ -1,4 +1,5 @@
 import type { Receipts } from "@/domain/entities/receipts/receipts";
+import { parseTimestampToLocaleDate } from "@/domain/global-helpers/time-tools";
 import { buildQueryParamsAndSerialized } from "@/domain/http/build-query-params";
 import type { FilteredParamsDto } from "@/domain/http/http-client";
 import type { PaginationDto } from "@/domain/http/pagination-dto";
@@ -17,8 +18,10 @@ export class ReceiptsFilteredUseCase implements ReceiptsFilteredUseCaseDto {
       limit: params?.limit ?? "20",
       page: params?.limit ?? "1",
       name: params?.name ?? "",
-      status: params?.status ?? "ACTIVE",
-      companyId: params?.companyId ?? ""
+      companyId: params?.companyId ?? "",
+      scope: params?.companyId ?? "",
+      from: params?.from ? parseTimestampToLocaleDate(params?.from).toISOString() : "",
+      to: params?.to ? parseTimestampToLocaleDate(params?.to).toISOString() : "",
     })
 
     const { data } = await this.endpoint.filtered(serializedParams)

@@ -16,32 +16,33 @@ export default function RequestsPage({ requests }: RequestsPageParams) {
 	const { form, columns, closeSheet } = useRequestsPage();
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
+
 	return (
-		<InfinityQueryProvider<Request>
-			queryKey="request"
-			facadeFactory={requestsFacadeFactory}
-			initialData={requests}
-		>
-			<div className="w-full h-full flex flex-col gap-4 ">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} solicitação`,
-							FormComponent: <RequestSheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Solicitação",
-							sheetWidth: "32vw",
-							sheetMinWidth: "410px",
-							form,
-						}}
-					/>
-				</div>
+		<div className="w-full h-full flex flex-col gap-4 ">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} solicitação`,
+						FormComponent: <RequestSheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Solicitação",
+						sheetWidth: "32vw",
+						sheetMinWidth: "410px",
+						form,
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<Request>
+				queryKey="request"
+				facadeFactory={requestsFacadeFactory}
+				initialData={requests}
+			>
 				<InfinityTable<Request>
 					columns={columns}
 					heightTable={height - 30}
 					entity="solicitação"
 					pronoun="female"
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

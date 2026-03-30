@@ -17,32 +17,32 @@ export default function CompaniesPage({ companies }: CompaniesPageParams) {
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
 	return (
-		<InfinityQueryProvider<Company>
-			queryKey="company"
-			initialData={companies}
-			facadeFactory={companiesFacadeFactory}
-			sendParentCompanyId
-		>
-			<div className="flex flex-col  max-h-full">
-				<div className="flex justify-between pb-4 items-center" ref={headerRef}>
-					<h1 className="text-2xl font-semibold">Empresas</h1>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} empresa`,
-							labelOpenSheet: "Empresa",
-							FormComponent: <CompaniesLayoutSheetForm closeSheet={() => closeSheet()} />,
-							sheetMinWidth: "900px",
-							form,
-						}}
-					/>
-				</div>
+		<div className="flex flex-col  max-h-full">
+			<div className="flex justify-between pb-4 items-center" ref={headerRef}>
+				<h1 className="text-2xl font-semibold">Empresas</h1>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} empresa`,
+						labelOpenSheet: "Empresa",
+						FormComponent: <CompaniesLayoutSheetForm closeSheet={() => closeSheet()} />,
+						sheetMinWidth: "900px",
+						form,
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<Company>
+				queryKey="company"
+				initialData={companies}
+				facadeFactory={companiesFacadeFactory}
+				sendParentCompanyId
+			>
 				<InfinityTable<Company>
 					columns={columns}
 					entity="empresa"
 					pronoun="female"
 					heightTable={height - 15}
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider >
+		</div>
 	);
 }

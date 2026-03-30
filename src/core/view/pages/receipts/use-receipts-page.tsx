@@ -1,25 +1,32 @@
-import { receiptsFacadeFactory } from "@/application/factories/receipts-factory";
-import { type Receipts, ReceiptsGenerateModeEnum } from "@/domain/entities/receipts/receipts";
+import type { Receipts } from "@/domain/entities/receipts/receipts";
 import type { PaginationDto } from "@/domain/http/pagination-dto";
 import { InifinityTableSelectBody } from "@/view/components/inifity-table/components/inifinity-table-select-body";
 import { InifinityTableSelectHeader } from "@/view/components/inifity-table/components/inifinity-table-select-header";
 import { DownloadFileToast } from "@/view/components/reutilities-toasts/download-file-toast";
 import { toastCustom } from "@/view/components/toaster/toast-custom";
-import { toastError } from "@/view/components/toaster/toast-error";
 import { Button } from "@/view/components/ui/button";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { Download } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 
 export function useReceiptsPage(receipts: PaginationDto<Receipts[]>) {
 	const [selectsReceipts, setSelectsReceipts] = useState<string[]>([]);
 	const receiptsIdList = receipts.data?.map(({ id }) => id) ?? [];
-	const user = useSession().data?.user
-	const token = user?.token ?? ""
-	const companyId = user?.companyId ?? ""
-	const receiptFacade = useMemo(() => receiptsFacadeFactory(token), [token])
+	// const user = useSession().data?.user
+	// const token = user?.token ?? ""
+	// const companyId = user?.companyId ?? ""
+	// const receiptFacade = useMemo(() => receiptsFacadeFactory(token), [token])
+	// const [fromDate] = useQueryState("fromDate", {
+	// 	history: "replace",
+	// 	shallow: true,
+	// 	clearOnDefault: false,
+	// });
+	// const [toDate] = useQueryState("toDate", {
+	// 	history: "replace",
+	// 	shallow: true,
+	// 	clearOnDefault: false,
+	// });
 	const columns: ColumnDef<Receipts>[] = [
 		{
 			accessorKey: "hour",
@@ -102,16 +109,16 @@ export function useReceiptsPage(receipts: PaginationDto<Receipts[]>) {
 			},
 		},
 	];
-	async function openWebSocket() {
-		try {
-			await receiptFacade.generate({ companyId, mode: ReceiptsGenerateModeEnum.ECONOMICO, from: "2026-02-01", to: "2026-03-01" })
-		} catch {
-			toastError({ tittle: "Erro de servidor" })
-		}
-	}
-	useEffect(() => {
-		openWebSocket()
-	}, [])
+	// async function openWebSocket() {
+	// 	try {
+	// 		const test = await receiptFacade.filtered({ companyId, scope: ScopeEnum.MY, from: "2026-02-01T00:00:00", to: "2026-03-01T00:00:00" })
+	// 		console.log(test)
+	// 	} catch {
+	// 		toastError({ tittle: "Erro de servidor" })
+	// 	}
+	// }
+
+
 	return {
 		columns,
 		selectsReceipts,

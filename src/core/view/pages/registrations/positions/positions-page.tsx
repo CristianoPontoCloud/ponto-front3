@@ -18,27 +18,28 @@ export default function PositionsPage({ positions }: PositionsPageParams) {
 	const { columns, form, closeSheet } = usePositionPage();
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
+
 	return (
-		<InfinityQueryProvider<Position>
-			queryKey="position"
-			facadeFactory={positionsFacadeFactory}
-			initialData={positions}
-		>
-			<div className="w-full h-full flex flex-col gap-4">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} cargo`,
-							FormComponent: <PositionSheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Cargo",
-							sheetWidth: "22vw",
-							sheetMinWidth: "410px",
-							form,
-						}}
-					/>
-				</div>
-				<InfinityTable<Position> columns={columns} heightTable={height - 30} entity="cargo" />
+		<div className="w-full h-full flex flex-col gap-4">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} cargo`,
+						FormComponent: <PositionSheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Cargo",
+						sheetWidth: "22vw",
+						sheetMinWidth: "410px",
+						form,
+					}}
+				/>
 			</div>
-		</InfinityQueryProvider>
+			<InfinityQueryProvider<Position>
+				queryKey="position"
+				facadeFactory={positionsFacadeFactory}
+				initialData={positions}
+			>
+				<InfinityTable<Position> columns={columns} heightTable={height - 30} entity="cargo" />
+			</InfinityQueryProvider>
+		</div>
 	);
 }

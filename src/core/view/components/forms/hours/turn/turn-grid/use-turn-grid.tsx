@@ -24,7 +24,7 @@ export interface TurnDetails extends TurnEntriesAndOuts {
 }
 
 export function useTurnGrid({ form }: UseTurnGridParams) {
-	const cycleLengthDays = Number(form.getValues("cycleLengthDays"));
+	const cycleLengthDays = Number(form.watch("cycleLengthDays"));
 	const periods = Number(form.getValues("periods"));
 	const patternType = form.getValues("patternType");
 
@@ -46,29 +46,33 @@ export function useTurnGrid({ form }: UseTurnGridParams) {
 	const [daysState, setDaysState] = useState<TurnDay[]>(() => {
 		return Array.from({ length: cycleLengthDays }).map((_, index): TurnDay => {
 			const day = formDaysRef.current[index];
+
 			return {
 				dayIndex: index,
 				isOff: day?.isOff ?? false,
-				startTime: "",
-				endTime: "",
-				workShiftId: "",
-				breakMinutes: 60,
-				createdAt: "",
-				deletedAt: "",
-				deletedBy: "",
-				updatedAt: "",
-				id: "",
+				startTime: day?.startTime ?? "",
+				endTime: day?.endTime ?? "",
+				workShiftId: day?.workShiftId ?? "",
+				breakMinutes: day?.breakMinutes ?? 60,
+				createdAt: day?.createdAt ?? "",
+				deletedAt: day?.deletedAt ?? "",
+				deletedBy: day?.deletedBy ?? "",
+				updatedAt: day?.updatedAt ?? "",
+				id: day?.id ?? "",
 				week: turnGridActions.weekLabelsUseCase({ index, type: patternType }),
-				total: "00:00",
+				total: day?.total ?? "00:00",
 				dayCutover: day?.dayCutover ?? "00:00",
-				periods: Array.from({ length: periods }).map((_, periodIndex) => ({
-					breakMinutes: 60,
-					endTime: "",
-					id: "",
-					periodIndex: periodIndex + 1,
-					startTime: "",
-					workShiftDayId: "",
-				})),
+				periods: Array.from({ length: periods }).map((_, periodIndex) => {
+					const existingPeriod = day?.periods?.[periodIndex];
+					return {
+						breakMinutes: existingPeriod?.breakMinutes ?? 60,
+						endTime: existingPeriod?.endTime ?? "",
+						id: existingPeriod?.id ?? "",
+						periodIndex: periodIndex + 1,
+						startTime: existingPeriod?.startTime ?? "",
+						workShiftDayId: existingPeriod?.workShiftDayId ?? "",
+					};
+				}),
 			};
 		});
 	});

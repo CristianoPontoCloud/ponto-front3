@@ -18,32 +18,33 @@ export default function OccurrencesPage({ occurrences }: OccurrencesPageParams) 
 	const { columns, form, closeSheet } = useOccurrencesPage();
 	const headerRef = useRef<HTMLDivElement>(null);
 	const heightTable = useBottomOffset(headerRef);
+
 	return (
-		<InfinityQueryProvider<Occurrence>
-			queryKey="occurrence"
-			facadeFactory={occurrencesFacadeFactory}
-			initialData={occurrences}
-		>
-			<div className="w-full h-full flex flex-col gap-4 ">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} ocorrência`,
-							FormComponent: <OccurrenceSheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Ocorrência",
-							sheetWidth: "22vw",
-							sheetMinWidth: "410px",
-							form,
-						}}
-					/>
-				</div>
+		<div className="w-full h-full flex flex-col gap-4 ">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} ocorrência`,
+						FormComponent: <OccurrenceSheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Ocorrência",
+						sheetWidth: "22vw",
+						sheetMinWidth: "410px",
+						form,
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<Occurrence>
+				queryKey="occurrence"
+				facadeFactory={occurrencesFacadeFactory}
+				initialData={occurrences}
+			>
 				<InfinityTable<Occurrence>
 					columns={columns}
 					heightTable={heightTable - 30}
 					entity="ocorrência"
 					pronoun="female"
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

@@ -20,29 +20,30 @@ export default function ExtraHourPage({ extraHours }: ExtraHourPageParams) {
 	const heightTable = useBottomOffset(ref);
 
 	return (
-		<InfinityQueryProvider<ExtraHour>
-			queryKey="extra-hour"
-			facadeFactory={extraHoursFacadeFactory}
-			initialData={extraHours}
-		>
-			<div className="w-full h-full flex flex-col gap-4">
-				<div ref={ref}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} hora extra`,
-							FormComponent: <ExtraHourLayoutSheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Hora extra",
-							sheetMinWidth: "96vw",
-							form,
-						}}
-					/>
-				</div>
+
+		<div className="w-full h-full flex flex-col gap-4">
+			<div ref={ref}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} hora extra`,
+						FormComponent: <ExtraHourLayoutSheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Hora extra",
+						sheetMinWidth: "96vw",
+						form,
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<ExtraHour>
+				queryKey="extra-hour"
+				facadeFactory={extraHoursFacadeFactory}
+				initialData={extraHours}
+			>
 				<InfinityTable<ExtraHour>
 					columns={columns}
 					heightTable={heightTable - 30}
 					entity="horas extras"
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

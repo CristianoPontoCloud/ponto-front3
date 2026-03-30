@@ -1,3 +1,5 @@
+import { TimeTrackingTypeEnum } from "@/domain/entities/time-tracking/header-form";
+import { ScopeEnum } from "@/domain/scope";
 import { type MiddlewareConfig, type NextRequest, NextResponse } from "next/server";
 
 const publicRoutes = [
@@ -50,19 +52,31 @@ export function middleware(request: NextRequest) {
 		return NextResponse.next();
 	}
 
+
+
 	// Rota privada
 	if (isPrivateRoute) {
-		if (
-			pathname === "/timetracking" &&
+		const timetrackingCase = pathname === "/timetracking" &&
 			(!searchParams.has("type") || searchParams.get("type") === "")
-		) {
+		if (timetrackingCase) {
 			const url = request.nextUrl.clone();
 
-			// Seta type = 2
-			url.searchParams.set("type", "2");
+			url.searchParams.set("type", TimeTrackingTypeEnum.monthly);
 
 			return NextResponse.redirect(url);
 		}
+
+		const receiptsCase = pathname === "/receipts" &&
+			(!searchParams.has("scope") || searchParams.get("scope") === "")
+
+		if (receiptsCase) {
+			const url = request.nextUrl.clone();
+
+			url.searchParams.set("scope", ScopeEnum.MY);
+
+			return NextResponse.redirect(url);
+		}
+
 		if (!authToken) {
 			const redirectUrl = request.nextUrl.clone();
 			redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE;

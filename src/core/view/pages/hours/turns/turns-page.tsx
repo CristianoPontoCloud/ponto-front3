@@ -18,29 +18,29 @@ export default function TurnsPage({ turns }: TurnsPageParams) {
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
 	return (
-		<InfinityQueryProvider<Turn>
-			queryKey="work-shift"
-			initialData={turns}
-			facadeFactory={turnsFacadeFactory}
-		>
-			<div className="w-full h-full flex flex-col gap-4">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} turno`,
-							FormComponent: (
-								<FormProvider {...form}>
-									<TurnsLayoutSheetForm closeSheet={() => closeSheet()} />
-								</FormProvider>
-							),
-							labelOpenSheet: "Turno",
-							sheetMinWidth: "96vw",
-							form,
-						}}
-					/>
-				</div>
-				<InfinityTable<TurnDetails> columns={columns} heightTable={height - 30} entity="turno" />
+		<div className="w-full h-full flex flex-col gap-4">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} turno`,
+						FormComponent: (
+							<FormProvider {...form}>
+								<TurnsLayoutSheetForm closeSheet={() => closeSheet()} />
+							</FormProvider>
+						),
+						labelOpenSheet: "Turno",
+						sheetMinWidth: "96vw",
+						form,
+					}}
+				/>
 			</div>
-		</InfinityQueryProvider>
+			<InfinityQueryProvider<Turn>
+				queryKey="work-shift"
+				initialData={turns}
+				facadeFactory={turnsFacadeFactory}
+			>
+				<InfinityTable<TurnDetails> columns={columns} heightTable={height - 30} entity="turno" />
+			</InfinityQueryProvider>
+		</div>
 	);
 }

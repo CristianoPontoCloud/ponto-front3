@@ -1,6 +1,6 @@
 "use client";
 import type { ChildrenReactNode } from "@/domain/children";
-import SubSidebar from "@/view/components/sub-sidebar/sub-sidebar";
+import SubSidebarLinks from "@/view/components/sub-sidebar/sub-sidebar-links";
 import {
 	Calendar,
 	CircleDollarSign,
@@ -39,7 +39,7 @@ const pages: MenuItem[] = [
 export default function RegistrationsBaseLayout({ children }: ChildrenReactNode) {
 	return (
 		<section className="flex gap-2 h-full ">
-			<SubSidebar pages={pages} title="Cadastros" statusFilterDefault="?status=ACTIVE" />
+			<SubSidebarLinks pages={pages} title="Cadastros" statusFilterDefault="?status=ACTIVE" />
 			{children}
 		</section>
 	);

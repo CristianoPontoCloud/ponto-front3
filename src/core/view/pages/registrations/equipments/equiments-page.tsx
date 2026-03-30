@@ -20,31 +20,32 @@ export default function EquipmentsPage({ equipments }: EquipmentsPageParams) {
 	const height = useBottomOffset(headerRef);
 
 	return (
-		<InfinityQueryProvider<Equipment>
-			queryKey="equipment"
-			facadeFactory={equipmentsFacadeFactory}
-			initialData={equipments}
-		>
-			<div className="w-full h-full flex flex-col gap-4 ">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} equipamentos`,
-							FormComponent: <EquimentSheetForm closeSheet={() => closeSheet()} />,
-							form,
-							labelOpenSheet: "Equipamento",
-							sheetWidth: "40vw",
-							sheetMinWidth: "441px",
-							sheetMaxWidth: "50vw",
-						}}
-					/>
-				</div>
+
+		<div className="w-full h-full flex flex-col gap-4 ">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} equipamentos`,
+						FormComponent: <EquimentSheetForm closeSheet={() => closeSheet()} />,
+						form,
+						labelOpenSheet: "Equipamento",
+						sheetWidth: "40vw",
+						sheetMinWidth: "441px",
+						sheetMaxWidth: "50vw",
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<Equipment>
+				queryKey="equipment"
+				facadeFactory={equipmentsFacadeFactory}
+				initialData={equipments}
+			>
 				<InfinityTable<Equipment>
 					columns={columns}
 					heightTable={height - 30}
 					entity="equipamento"
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

@@ -55,7 +55,6 @@ export function useTurnsPage() {
 				...policy,
 				id: turn.id,
 			};
-			console.log({ formProps });
 			setFormValues(formProps);
 		}
 		await getTurnFormValues();

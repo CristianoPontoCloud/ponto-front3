@@ -27,7 +27,7 @@ export default function DepartmentSheetForm(params: SheetFormProps) {
 		openModalExlcudeCostCenter,
 		usersForApproval,
 		onAddUserForApproval,
-		managersList,
+		collaboratorList,
 		deleteUserForApproval,
 		hasErrorOnUserForApproval,
 	} = useDepartmentSheetForm(params);
@@ -130,7 +130,7 @@ export default function DepartmentSheetForm(params: SheetFormProps) {
 						label="Usuários para adicionar"
 						classNames={{ formItem: "col-span-full sm:col-span-2 md:col-span-2 lg:col-span-2" }}
 						placeholder="Selecione os usuários"
-						options={managersList}
+						options={collaboratorList}
 						description={`Selecione um usuário e depois clique em adicionar para inclui-lo na lista de  "Usuários para de aprovar"`}
 					/>
 					<Button
@@ -167,7 +167,7 @@ export default function DepartmentSheetForm(params: SheetFormProps) {
 				</div>
 				<ScrollArea className="flex flex-col rounded-md" style={{ height: height - 165 }}>
 					{usersForApproval?.map((uuidCollaborator, index) => {
-						const collaborator = managersList.find(({ value }) => value === uuidCollaborator);
+						const collaborator = collaboratorList.find(({ value }) => value === uuidCollaborator);
 						return (
 							<div
 								key={index.toString()}

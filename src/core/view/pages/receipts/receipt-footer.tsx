@@ -1,6 +1,6 @@
 import { collaboratorsFacadeFactory } from "@/application/factories/collaborator/collaborators-facade-factory";
 import { useModal } from "@/application/providers/modal-provider/modal-provider";
-import { ViewTypeEnum } from "@/domain/view-type";
+import { ScopeEnum } from "@/domain/scope";
 import { CollaboratorViewerTooltipContent } from "@/view/components/entities/collaborator/collaborator-viewer-tooltip-content";
 import { Badge } from "@/view/components/ui/badge";
 import { Button } from "@/view/components/ui/button";
@@ -17,7 +17,7 @@ interface ReceiptFooterParams {
 	selectsReceipts: string[];
 }
 export function ReceiptFooter({ selectsReceipts }: ReceiptFooterParams) {
-	const [viewtype] = useQueryState("viewtype", {
+	const [scope] = useQueryState("scope", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
@@ -59,7 +59,7 @@ export function ReceiptFooter({ selectsReceipts }: ReceiptFooterParams) {
 		lastMark: "00/00/2025 às 00:00",
 	};
 	const collaboratorCase =
-		viewtype === ViewTypeEnum.MY ? collaboratorSession : selectedCollaborator;
+		scope === ScopeEnum.MY ? collaboratorSession : selectedCollaborator;
 
 	return (
 		<div className="w-full h-[36px] flex justify-between ">

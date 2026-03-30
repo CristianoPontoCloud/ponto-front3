@@ -20,30 +20,30 @@ export default function DepartmentsPage({ departments }: DepartmentsPageParams) 
 	const height = useBottomOffset(headerRef);
 
 	return (
-		<InfinityQueryProvider<Department>
-			queryKey="department"
-			facadeFactory={departmentsFacadeFactory}
-			initialData={departments}
-		>
-			<div className="w-full h-full flex flex-col gap-4 ">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} departamento`,
-							form: form,
-							FormComponent: <DepartmentSheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Departamento",
-							sheetWidth: "30vw",
-							sheetMinWidth: "410px",
-						}}
-					/>
-				</div>
+		<div className="w-full h-full flex flex-col gap-4 ">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} departamento`,
+						form: form,
+						FormComponent: <DepartmentSheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Departamento",
+						sheetWidth: "30vw",
+						sheetMinWidth: "410px",
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<Department>
+				queryKey="department"
+				facadeFactory={departmentsFacadeFactory}
+				initialData={departments}
+			>
 				<InfinityTable<Department>
 					columns={columns}
 					heightTable={height - 30}
 					entity="departamento"
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

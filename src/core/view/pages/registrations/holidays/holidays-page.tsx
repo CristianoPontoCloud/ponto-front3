@@ -18,26 +18,26 @@ export default function HolidaysPage({ holidays }: HolidaysPageParams) {
 	const height = useBottomOffset(headerRef);
 
 	return (
-		<InfinityQueryProvider<Holiday>
-			queryKey="holiday"
-			facadeFactory={holidaysFacadeFactory}
-			initialData={holidays}
-		>
-			<div className="w-full h-full flex flex-col gap-4">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} feriado`,
-							FormComponent: <HolidaySheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Feriado",
-							sheetWidth: "22vw",
-							sheetMinWidth: "410px",
-							form,
-						}}
-					/>
-				</div>
-				<InfinityTable<Holiday> columns={columns} heightTable={height - 30} entity="feriado" />
+		<div className="w-full h-full flex flex-col gap-4">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} feriado`,
+						FormComponent: <HolidaySheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Feriado",
+						sheetWidth: "22vw",
+						sheetMinWidth: "410px",
+						form,
+					}}
+				/>
 			</div>
-		</InfinityQueryProvider>
+			<InfinityQueryProvider<Holiday>
+				queryKey="holiday"
+				facadeFactory={holidaysFacadeFactory}
+				initialData={holidays}
+			>
+				<InfinityTable<Holiday> columns={columns} heightTable={height - 30} entity="feriado" />
+			</InfinityQueryProvider>
+		</div>
 	);
 }

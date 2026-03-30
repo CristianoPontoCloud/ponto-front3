@@ -18,30 +18,30 @@ export default function DismissalsPage({ dismissals }: DismissalsPageParams) {
 	const height = useBottomOffset(headerRef);
 
 	return (
-		<InfinityQueryProvider<Dismissal>
-			queryKey="dismissal"
-			facadeFactory={dismissalsFacadeFactory}
-			initialData={dismissals}
-		>
-			<div className="w-full h-full flex flex-col gap-4 ">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} motivo de demissão`,
-							FormComponent: <DismissalSheetForm closeSheet={() => closeSheet()} />,
-							form,
-							labelOpenSheet: "Motivo de demissão",
-							sheetWidth: "23.5vw",
-							sheetMinWidth: "441px",
-						}}
-					/>
-				</div>
+		<div className="w-full h-full flex flex-col gap-4 ">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} motivo de demissão`,
+						FormComponent: <DismissalSheetForm closeSheet={() => closeSheet()} />,
+						form,
+						labelOpenSheet: "Motivo de demissão",
+						sheetWidth: "23.5vw",
+						sheetMinWidth: "441px",
+					}}
+				/>
+			</div>
+			<InfinityQueryProvider<Dismissal>
+				queryKey="dismissal"
+				facadeFactory={dismissalsFacadeFactory}
+				initialData={dismissals}
+			>
 				<InfinityTable<Dismissal>
 					columns={columns}
 					entity="motivo de demissão"
 					heightTable={height - 30}
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }

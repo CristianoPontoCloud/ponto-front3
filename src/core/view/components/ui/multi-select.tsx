@@ -45,7 +45,7 @@ const multiSelectVariants = cva(
  */
 export interface MultiSelectProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof multiSelectVariants> {
+	VariantProps<typeof multiSelectVariants> {
 	/**
 	 * An array of option objects to be displayed in the multi-select component.
 	 * Each option object has a label, value, and an optional icon.
@@ -147,6 +147,11 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
 				observer.disconnect();
 			};
 		}, [buttonRef]);
+
+		React.useEffect(() => {
+			if (defaultValue.length > 0 && selectedValues === defaultValue) return
+			setSelectedValues(defaultValue)
+		}, [defaultValue])
 
 		const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 			if (event.key === "Enter") {

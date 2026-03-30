@@ -21,11 +21,12 @@ export function usePunchClockModalForm() {
 			companyId,
 			origin: "02",
 			type: "01",
+			collectorType: "WEB",
 			date: "",
 			time: "",
 			timestamp: "",
 			companyTimeZone: timezone,
-			collectorId: "web",
+			collectorId: "",
 		},
 		mode: "onSubmit",
 	});

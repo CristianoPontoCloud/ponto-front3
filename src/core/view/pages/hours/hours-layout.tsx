@@ -1,6 +1,6 @@
 "use client";
 import type { ChildrenReactNode } from "@/domain/children";
-import SubSidebar from "@/view/components/sub-sidebar/sub-sidebar";
+import SubSidebarLinks from "@/view/components/sub-sidebar/sub-sidebar-links";
 import { CalendarClock, FolderClock, Hourglass, ShieldAlert } from "lucide-react";
 import type React from "react";
 
@@ -22,7 +22,7 @@ const pages: MenuItem[] = [
 export default function HoursBaseLayout({ children }: ChildrenReactNode) {
 	return (
 		<section className="flex gap-2 h-full">
-			<SubSidebar pages={pages} title="Horários" statusFilterDefault="?status=ACTIVE" />
+			<SubSidebarLinks pages={pages} title="Horários" statusFilterDefault="?status=ACTIVE" />
 			{children}
 		</section>
 	);

@@ -19,7 +19,6 @@ interface ProviderProps<TData> {
 	facadeFactory: (token: string) => FacadeFactory<TData>;
 	children: ReactNode;
 	sendParentCompanyId?: boolean;
-	sendCollaboratorId?: boolean;
 }
 
 const Context = createContext<{
@@ -43,7 +42,6 @@ export function InfinityQueryProvider<TData = unknown>({
 	initialData,
 	facadeFactory,
 	sendParentCompanyId,
-	sendCollaboratorId,
 }: ProviderProps<TData>) {
 	const session = useSession();
 	const token = session.data?.user.token ?? "";
@@ -51,7 +49,11 @@ export function InfinityQueryProvider<TData = unknown>({
 	const parentCompanyId = sendParentCompanyId
 		? (session.data?.user.parentCompanyId ?? "")
 		: undefined;
-	const collaboratorId = sendCollaboratorId ? (session.data?.user.collaboratorId ?? "") : undefined;
+	const [collaboratorId] = useQueryState("collaboratorId", {
+		history: "replace",
+		shallow: true,
+		clearOnDefault: false,
+	});
 	const [status] = useQueryState("status", {
 		history: "replace",
 		shallow: true,
@@ -62,19 +64,42 @@ export function InfinityQueryProvider<TData = unknown>({
 		shallow: true,
 		clearOnDefault: false,
 	});
+	const [scope] = useQueryState("scope", {
+		history: "replace",
+		shallow: true,
+		clearOnDefault: false,
+	});
+	const [from] = useQueryState("from", {
+		history: "replace",
+		shallow: true,
+		clearOnDefault: false,
+	});
+	const [to] = useQueryState("to", {
+		history: "replace",
+		shallow: true,
+		clearOnDefault: false,
+	});
+	const [year] = useQueryState("year", {
+		history: "replace",
+		shallow: true,
+		clearOnDefault: false,
+	});
 
 	const facade = useMemo(() => facadeFactory(token), [token, facadeFactory]);
 	const query = useInfiniteQuery<PaginationDto<TData[]>>({
-		queryKey: [queryKey, status, name, companyId, collaboratorId],
+		queryKey: [queryKey, status, name, companyId, collaboratorId, scope, from, to, year],
 		queryFn: async ({ pageParam }) => {
 			const page = pageParam as string;
 			return await facade.filtered({
 				status: status ?? undefined,
 				page: page ?? undefined,
 				name: name ?? undefined,
+				scope: scope ?? undefined,
+				from: from ?? undefined,
+				to: to ?? undefined,
+				collaboratorId: collaboratorId ?? undefined,
 				companyId,
 				parentCompanyId,
-				collaboratorId,
 			});
 		},
 		getNextPageParam: (res) => {

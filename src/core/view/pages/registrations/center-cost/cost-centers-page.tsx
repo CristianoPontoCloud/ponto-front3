@@ -17,33 +17,34 @@ export default function CostCentersPage({ costCenters }: CostCentersPageParams) 
 	const { form, columns, closeSheet } = useCostCentersPage();
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
+
 	return (
-		<InfinityQueryProvider<CostCenter>
-			queryKey="center-cost"
-			facadeFactory={costcentersFacadeFactory}
-			initialData={costCenters}
-		>
-			<div className="w-full h-full flex flex-col gap-4 ">
-				<div ref={headerRef}>
-					<DataManager
-						sheetParams={{
-							title: `${form.watch("id") ? "Editar" : "Cadastrar"} centro de custo`,
-							FormComponent: <CostCenterSheetForm closeSheet={() => closeSheet()} />,
-							labelOpenSheet: "Centro de custo",
-							sheetWidth: "22vw",
-							sheetMinWidth: "410px",
-							form,
-						}}
-					/>
-				</div>
-				<div className="flex flex-col h-full justify-between">
+		<div className="w-full h-full flex flex-col gap-4 ">
+			<div ref={headerRef}>
+				<DataManager
+					sheetParams={{
+						title: `${form.watch("id") ? "Editar" : "Cadastrar"} centro de custo`,
+						FormComponent: <CostCenterSheetForm closeSheet={() => closeSheet()} />,
+						labelOpenSheet: "Centro de custo",
+						sheetWidth: "22vw",
+						sheetMinWidth: "410px",
+						form,
+					}}
+				/>
+			</div>
+			<div className="flex flex-col h-full justify-between">
+				<InfinityQueryProvider<CostCenter>
+					queryKey="center-cost"
+					facadeFactory={costcentersFacadeFactory}
+					initialData={costCenters}
+				>
 					<InfinityTable<CostCenter>
 						heightTable={height - 30}
 						columns={columns}
 						entity="centro de custo"
 					/>
-				</div>
+				</InfinityQueryProvider>
 			</div>
-		</InfinityQueryProvider>
+		</div>
 	);
 }

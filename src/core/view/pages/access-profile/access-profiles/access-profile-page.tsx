@@ -21,16 +21,7 @@ export function AccessProfilePage({ markingProlfiles }: AccessProfileParams) {
 	const id = form.watch("id");
 
 	return (
-		<InfinityQueryProvider<AccessProfile>
-			queryKey="marking-profile"
-			facadeFactory={accessProfileFacadeFactory}
-			initialData={markingProlfiles}
-		>
-			{/* <div
-				className={`absolute inset-0 transition-opacity duration-300 ${
-					tab === SettingTabsEnum.MARKING_PROFILE ? "opacity-100" : "opacity-0 pointer-events-none"
-				}`}
-			> */}
+		<>
 			<div className="flex flex-col py-4">
 				<div className="flex justify-between items-center" ref={headerRef}>
 					<h1 className="text-xl font-semibold">Permissões</h1>
@@ -48,13 +39,17 @@ export function AccessProfilePage({ markingProlfiles }: AccessProfileParams) {
 					/>
 				</div>
 			</div>
-			<InfinityTable<AccessProfile>
-				columns={columns}
-				heightTable={height}
-				entity="perfil de marcação"
-				// className="border-solid rounded-t-none border-t-0 !important"
-			/>
-			{/* </div> */}
-		</InfinityQueryProvider>
+			<InfinityQueryProvider<AccessProfile>
+				queryKey="marking-profile"
+				facadeFactory={accessProfileFacadeFactory}
+				initialData={markingProlfiles}
+			>
+				<InfinityTable<AccessProfile>
+					columns={columns}
+					heightTable={height}
+					entity="perfil de marcação"
+				/>
+			</InfinityQueryProvider>
+		</>
 	);
 }

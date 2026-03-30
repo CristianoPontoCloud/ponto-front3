@@ -5,9 +5,6 @@ import type { ValueLabel } from "@/domain/value-label";
 import { GridForm } from "@/view/components/formfields/grid-from";
 import { InputForm } from "@/view/components/formfields/input-form-field";
 import SelectForm from "@/view/components/formfields/select-form";
-import { Button } from "@/view/components/ui/button";
-import { FormItem } from "@/view/components/ui/form";
-import { RefreshCcw } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { tv } from "tailwind-variants";
@@ -43,23 +40,24 @@ export function TurnForm() {
 			patternType: form.getValues("patternType") as TurnTypeEnum,
 		};
 	}
-	function resetDays() {
-		if (!frozenValuesRef.current) return;
+	// function resetDays() {
+	// 	if (!frozenValuesRef.current) return;
 
-		const { days, cycleDays, periods, patternType } = frozenValuesRef.current;
+	// 	const { days, cycleDays, periods, patternType } = frozenValuesRef.current;
 
-		form.setValue("patternType", patternType);
-		form.setValue("cycleLengthDays", cycleDays);
-		form.setValue("periods", periods);
-		form.setValue("days", days);
-	}
+	// 	form.setValue("patternType", patternType);
+	// 	form.setValue("cycleLengthDays", cycleDays);
+	// 	form.setValue("periods", periods);
+	// 	form.setValue("days", days);
+	// }
 	const id = form.watch("id");
 
 	const nameVariants = tv({
 		base: "col-span-6 sm:col-span-12 md:col-span-6",
 		variants: {
 			id: {
-				true: "lg:col-span-5",
+				// true: "lg:col-span-5",
+				true: "lg:col-span-6",
 				false: "lg:col-span-6",
 			},
 		},
@@ -68,16 +66,18 @@ export function TurnForm() {
 		base: "col-span-6 sm:col-span-4 md:col-span-2",
 		variants: {
 			id: {
-				true: "lg:col-span-1",
+				// true: "lg:col-span-1",
+				true: "lg:col-span-2",
 				false: "lg:col-span-2",
 			},
 		},
 	});
-
+	const { setValue, getValues } = form
 	useEffect(() => {
 		if (!turnType) return;
-		form.setValue("cycleLengthDays", turnCycleDaysUseCase(turnType));
-	}, [turnType, form]);
+		setValue("cycleLengthDays", turnCycleDaysUseCase(turnType, getValues("cycleLengthDays")));
+	}, [turnType, setValue]);
+
 	return (
 		<div className="w-full h-full p-1 pt-0 mr-2 flex flex-col gap-4" data-testid="form-turn">
 			<div ref={ref}>
@@ -100,6 +100,7 @@ export function TurnForm() {
 						classNames={{ formItem: "col-span-6 sm:col-span-4 md:col-span-2 lg:col-span-2" }}
 						datas={TurnsTypeData}
 						description="description"
+						disabled={!!id}
 					/>
 					<InputForm
 						form={form}
@@ -111,6 +112,7 @@ export function TurnForm() {
 						disabled={disableCycleDays}
 						required
 						min={1}
+						max={365}
 						description="description"
 					/>
 					<SelectForm
@@ -130,7 +132,7 @@ export function TurnForm() {
 							formItem: periodVariants({ id: id !== "" }),
 						}}
 					/>
-					{id && (
+					{/* {id && (
 						<FormItem
 							className={
 								"w-full flex flex-col justify-end col-span-2 sm:col-span-6 md:col-span-6 lg:col-span-2"
@@ -141,7 +143,7 @@ export function TurnForm() {
 								<RefreshCcw />
 							</Button>
 						</FormItem>
-					)}
+					)} */}
 				</GridForm>
 			</div>
 			<TurnGrid form={form} height={height - 110} />

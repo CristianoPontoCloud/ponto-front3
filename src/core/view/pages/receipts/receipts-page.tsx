@@ -15,16 +15,16 @@ export function ReceiptsPage({ receipts }: { receipts: PaginationDto<Receipts[]>
 	const height = useBottomOffset(headerRef);
 	const { columns, selectsReceipts } = useReceiptsPage(receipts);
 	return (
-		<InfinityQueryProvider<Receipts>
-			queryKey="recepts"
-			initialData={receipts}
-			facadeFactory={receiptsFacadeFactory}
-		>
-			<div className="flex flex-col max-h-full gap-4">
-				<div className="flex justify-between items-center" ref={headerRef}>
-					<h1 className="text-2xl font-semibold">Comprovantes</h1>
-					<ReceiptsFilters />
-				</div>
+		<div className="flex flex-col max-h-full gap-4">
+			<div className="flex justify-between items-center" ref={headerRef}>
+				<h1 className="text-2xl font-semibold">Comprovantes</h1>
+				<ReceiptsFilters />
+			</div>
+			<InfinityQueryProvider<Receipts>
+				queryKey="recepts"
+				initialData={receipts}
+				facadeFactory={receiptsFacadeFactory}
+			>
 				<InfinityTable<Receipts>
 					columns={columns}
 					entity="comprovante"
@@ -36,8 +36,8 @@ export function ReceiptsPage({ receipts }: { receipts: PaginationDto<Receipts[]>
 							"Todos os comprovantes do collaborador no período serão disponibilizados aqui.",
 					}}
 				/>
-				<ReceiptFooter selectsReceipts={selectsReceipts} />
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+			<ReceiptFooter selectsReceipts={selectsReceipts} />
+		</div>
 	);
 }

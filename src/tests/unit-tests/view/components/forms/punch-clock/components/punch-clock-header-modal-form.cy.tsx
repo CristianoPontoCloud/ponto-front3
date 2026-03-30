@@ -10,6 +10,7 @@ describe("<PunchClockHeaderModalForm />", () => {
 		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		const form = useForm<PunchFormProps>({
 			values: {
+				collectorType: "WEB",
 				collaboratorId: "",
 				companyId: "",
 				origin: "02",

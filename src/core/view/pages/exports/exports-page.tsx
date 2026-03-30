@@ -21,32 +21,32 @@ function Exports({ exports }: ExportPageParams) {
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
 	return (
-		<InfinityQueryProvider<ExportLayout>
-			initialData={exports}
-			queryKey="exports"
-			facadeFactory={exportsFacadeFactory}
-		>
-			<div className="flex flex-col h-full">
-				<div className="flex justify-between mb-4 items-center" ref={headerRef}>
-					<h1 className="text-2xl font-semibold">Exportações</h1>
-					<DataManager
-						sheetParams={{
-							title: <ExportHeaderSheetForm />,
-							labelOpenSheet: "Adicionar",
-							FormComponent: <ExportSheetForm closeSheet={closeSheet} />,
-							sheetMinWidth: "55vw",
-							form: formExportLayout,
-						}}
-						rederingFilterController={false}
-					/>
-				</div>
+		<div className="flex flex-col h-full">
+			<div className="flex justify-between mb-4 items-center" ref={headerRef}>
+				<h1 className="text-2xl font-semibold">Exportações</h1>
+				<DataManager
+					sheetParams={{
+						title: <ExportHeaderSheetForm />,
+						labelOpenSheet: "Adicionar",
+						FormComponent: <ExportSheetForm closeSheet={closeSheet} />,
+						sheetMinWidth: "55vw",
+						form: formExportLayout,
+					}}
+					rederingFilterController={false}
+				/>
+			</div>
+			<InfinityQueryProvider<ExportLayout>
+				initialData={exports}
+				queryKey="exports"
+				facadeFactory={exportsFacadeFactory}
+			>
 				<InfinityTable<ExportLayout>
 					columns={columns}
 					heightTable={height - 30}
 					entity="colaborador"
 				/>
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+		</div>
 	);
 }
 

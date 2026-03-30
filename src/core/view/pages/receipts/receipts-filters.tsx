@@ -1,5 +1,6 @@
 import { collaboratorsFacadeFactory } from "@/application/factories/collaborator/collaborators-facade-factory";
-import { ViewTypeEnum } from "@/domain/view-type";
+import { parseTimestampToLocaleDate } from "@/domain/global-helpers/time-tools";
+import { ScopeEnum } from "@/domain/scope";
 import { Combobox } from "@/view/components/combo-box/combo-box";
 import { DatePickerWithRange } from "@/view/components/ui/date-range-picker";
 import { Tabs, TabsList, TabsTrigger } from "@/view/components/ui/tabs";
@@ -30,39 +31,43 @@ export function ReceiptsFilters() {
 			value: id,
 			label: `${name} ${surname}`,
 		})) ?? [];
-	const [viewtype, setViewtype] = useQueryState("viewtype", {
+	const [scope, setscope] = useQueryState("scope", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
 	});
-	const isMyViewType = viewtype === ViewTypeEnum.MY;
+	const isMyscope = scope === ScopeEnum.MY;
 	const [collaboratorId, setCollaboratorId] = useQueryState("collaboratorId", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
 	});
-	const [dateTo, setDateTo] = useQueryState("dateTo", {
+	const [to, setTo] = useQueryState("to", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
 	});
-	const [dateFrom, setDateFrom] = useQueryState("dateFrom", {
+	const [from, setFrom] = useQueryState("from", {
 		history: "replace",
 		shallow: true,
 		clearOnDefault: false,
 	});
 	// useEffect(() => {
-	// 	if (isMyViewType) {
+	// 	if (isMyscope) {
 	// 		setCollaboratorId(userCollaboratorId);
 	// 		return;
 	// 	}
-	// }, [token, isMyViewType, userCollaboratorId, setCollaboratorId]);
+	// }, [token, isMyscope, userCollaboratorId, setCollaboratorId]);
 	useEffect(() => {
-		if (isMyViewType) {
+		if (isMyscope) {
 			setCollaboratorId(userCollaboratorId);
 			return;
 		}
-	}, [viewtype, token, isMyViewType, userCollaboratorId, setCollaboratorId]);
+		if (!isMyscope) {
+			setCollaboratorId("")
+		}
+
+	}, [scope, token, isMyscope, userCollaboratorId, setCollaboratorId]);
 	return (
 		<div className={"w-full  flex gap-2 justify-end"}>
 			<Combobox
@@ -77,30 +82,30 @@ export function ReceiptsFilters() {
 						<UserRound className="text-muted w-[12px] h-[12px]" />
 					</div>
 				}
-				disabled={isMyViewType}
+				disabled={isMyscope}
 			/>
 			<DatePickerWithRange
-				dateFrom={dateFrom ? new Date(dateFrom) : null}
-				dateTo={dateTo ? new Date(dateTo) : null}
+				dateFrom={from ? new Date(parseTimestampToLocaleDate(from)) : null}
+				dateTo={to ? new Date(parseTimestampToLocaleDate(to)) : null}
 				onChangeFromDate={(value) => {
 					if (!value) return;
 					const formatted = value.toISOString().split("T")[0];
-					setDateFrom(formatted);
+					setFrom(formatted);
 				}}
 				onChangeToDate={(value) => {
 					if (!value) return;
 					const formatted = value.toISOString().split("T")[0];
-					setDateTo(formatted);
+					setTo(formatted);
 				}}
 				align="end"
 			/>
-			<Tabs value={viewtype ?? ""} onValueChange={(value) => setViewtype(value)} data-testid="tabs">
+			<Tabs value={scope ?? ""} onValueChange={(value) => setscope(value)} data-testid="tabs">
 				<TabsList>
-					<TabsTrigger value={ViewTypeEnum.MY}>
+					<TabsTrigger value={ScopeEnum.MY}>
 						<User className="w-4 h-4" />
 						Minhas
 					</TabsTrigger>
-					<TabsTrigger value={ViewTypeEnum.COMPANY}>
+					<TabsTrigger value={ScopeEnum.COMPANY}>
 						<Building2 className="w-4 h-4" />
 						Empresa
 					</TabsTrigger>

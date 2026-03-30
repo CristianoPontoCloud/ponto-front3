@@ -144,8 +144,6 @@ export function RequestInstanceCreateCaseSheetForm({ closeSheet }: SheetFormProp
 	async function onSubmit(data: RequestInstance) {
 		if (!requestSelected) return;
 		let hasError = false;
-		console.log(typeof data.startDate);
-		console.log(typeof data.endDate);
 		const conditionalValidation = {
 			[ALL_DAY]: () => {
 				if (typeof data.startDate !== "object") {
@@ -224,8 +222,6 @@ export function RequestInstanceCreateCaseSheetForm({ closeSheet }: SheetFormProp
 			return;
 		}
 	}
-
-	console.log(form.formState.errors);
 
 	return (
 		<RequestInstanceBodyLayoutSheetForm onSubmit={onSubmit}>

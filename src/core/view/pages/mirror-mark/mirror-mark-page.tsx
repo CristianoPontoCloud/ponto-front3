@@ -13,18 +13,19 @@ import { useMirrorMarkPage } from "./use-mirror-mark-page";
 export function MirrorMarkPage({ mirrorsMark }: { mirrorsMark: PaginationDto<MirrorMark[]> }) {
 	const headerRef = useRef<HTMLDivElement | null>(null);
 	const height = useBottomOffset(headerRef);
-	const { columns, selectsMirrorMarks } = useMirrorMarkPage(mirrorsMark);
+	const { columns, selectsIdsMirrorMarks } = useMirrorMarkPage(mirrorsMark);
 	return (
-		<InfinityQueryProvider<MirrorMark>
-			queryKey="mirror-mark"
-			initialData={mirrorsMark}
-			facadeFactory={mirrorMarkFacadeFactory}
-		>
-			<div className="flex flex-col max-h-full gap-4">
-				<div className="flex justify-between items-center" ref={headerRef}>
-					<h1 className="text-2xl font-semibold w-full">Espelho de ponto</h1>
-					<MirrorMarkFilters />
-				</div>
+
+		<div className="flex flex-col max-h-full gap-4">
+			<div className="flex justify-between items-center" ref={headerRef}>
+				<h1 className="text-2xl font-semibold w-full">Espelho de ponto</h1>
+				<MirrorMarkFilters />
+			</div>
+			<InfinityQueryProvider<MirrorMark>
+				queryKey="mirror-mark"
+				initialData={mirrorsMark}
+				facadeFactory={mirrorMarkFacadeFactory}
+			>
 				<InfinityTable<MirrorMark>
 					columns={columns}
 					entity="espelho de ponto"
@@ -36,8 +37,8 @@ export function MirrorMarkPage({ mirrorsMark }: { mirrorsMark: PaginationDto<Mir
 							"Todos os espelhos de ponto do collaborador no período serão disponibilizados aqui.",
 					}}
 				/>
-				<MirrorMarkFooter selectsMirrorMarks={selectsMirrorMarks} />
-			</div>
-		</InfinityQueryProvider>
+			</InfinityQueryProvider>
+			<MirrorMarkFooter selectsIdsMirrorMarks={selectsIdsMirrorMarks} />
+		</div>
 	);
 }

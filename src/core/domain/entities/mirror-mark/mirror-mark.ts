@@ -1,18 +1,19 @@
-import type { ViewTypeEnum } from "@/domain/view-type"
-import type { TimeRegistersDto } from "../time-registers"
+import type { ScopeEnum } from "@/domain/scope"
 
-export interface MirrorMark extends TimeRegistersDto {
+export interface MirrorMark {
   id: string
-  periodTo: Date
-  periodFrom: Date
-  urlDownload: string
+  isCurrent: boolean
+  periodTo: string
+  periodFrom: string
 }
 
-export interface MirrorMarkGenerate {
+export interface MirrorMarkGenerateParams {
   companyId: string;
   collaboratorId?: string | null;
-  from: string;
-  to: string;
+  periods: {
+    from: string;
+    to: string;
+  }[]
   tz: "America/Sao_Paulo";
-  scope: ViewTypeEnum;
+  scope: ScopeEnum;
 }

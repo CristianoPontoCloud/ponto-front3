@@ -34,10 +34,14 @@ export interface FilteredParamsDto {
 	endDate?: string;
 	dateFrom?: string;
 	dateTo?: string;
+	from?: string;
+	to?: string;
+	year?: string;
 	companyId?: string;
 	parentCompanyId?: string;
-	hourBankId?: string
+	hourBankId?: string;
 	collaboratorId?: string;
+	scope?: string;
 }
 
 export interface FilteredParamsWithCollaboratorId {

@@ -44,7 +44,6 @@ export function useExtraHourPage() {
 		async function getExtraHourFormValues() {
 			const extraHour = await extrahourFacade.findById(extrahourId);
 			if (!extraHour) return;
-			console.log(extraHour)
 			setFormValues({ ...extraHour, companyId });
 		}
 		await getExtraHourFormValues();

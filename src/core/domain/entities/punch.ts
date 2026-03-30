@@ -7,6 +7,7 @@ export interface PunchFormProps {
   timestamp: string
   companyId: string
   companyTimeZone: string
+  collectorType: "WEB"
   type: "01"
   origin: "02"
   collectorId: string

@@ -1,4 +1,4 @@
-import type { MirrorMark, MirrorMarkGenerate } from "@/domain/entities/mirror-mark/mirror-mark"
+import type { MirrorMark, MirrorMarkGenerateParams } from "@/domain/entities/mirror-mark/mirror-mark"
 import type { ResponseDto, WebSocketResponse } from "@/domain/http/http-client"
 import type { PaginationDto } from "@/domain/http/pagination-dto"
 import type { HttpClient } from "@/infra/http/http-client"
@@ -11,16 +11,17 @@ type SocketMetadateResponse = ResponseDto<WebSocketResponse>
 
 interface MirrorMarkEndPointDto {
   filtered(urlParams?: string): Promise<AxiosResponse<FindAllResponse>>
-  generate(body: MirrorMarkGenerate): Promise<AxiosResponse<SocketMetadateResponse>>
+  generate(body: MirrorMarkGenerateParams): Promise<AxiosResponse<SocketMetadateResponse>>
 }
 
 export class MirrorMarkEndpoint implements MirrorMarkEndPointDto {
   constructor(private readonly client: HttpClient) { }
-  private readonly endpoint = 'generate-espelho'
+  private readonly restApiEndpoint = "espelhos";
+  private readonly generateWebsocketEndpoint = "generate-espelho";
   async filtered(urlParams?: string): Promise<AxiosResponse<FindAllResponse>> {
-    return await this.client.get<FindAllResponse>(`${this.endpoint}/findAllFiltered${urlParams ?? ""}`)
+    return await this.client.get<FindAllResponse>(`${this.restApiEndpoint}/competencias${urlParams ?? ""}`)
   }
-  async generate(body: MirrorMarkGenerate): Promise<AxiosResponse<SocketMetadateResponse>> {
-    return this.client.post<MirrorMarkGenerate, SocketMetadateResponse>({ url: this.endpoint, body })
+  async generate(body: MirrorMarkGenerateParams): Promise<AxiosResponse<SocketMetadateResponse>> {
+    return this.client.post<MirrorMarkGenerateParams, SocketMetadateResponse>({ url: this.generateWebsocketEndpoint, body })
   }
 }
