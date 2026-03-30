@@ -20,6 +20,7 @@ const {
 } = process.env;
 
 const nextConfig = {
+		output: "standalone",
 	async redirects() {
 		return [
 			{ source: "/registrations", destination: "/registrations/positions", permanent: true },
